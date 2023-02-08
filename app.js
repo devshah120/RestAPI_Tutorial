@@ -1,11 +1,17 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const ProductsRoute = require("./routes/products.route");
 const app = express();
+mongoose.set("strictQuery", false);
+mongoose.connect("mongodb+srv://admin:admin@demo.56us5gq.mongodb.net/?retryWrites=true&w=majority/demo").then(() => {
+  console.log("Mongodb Connected");
+});
+mongoose.set("strictQuery", true);
 app.use("/Products", ProductsRoute);
 
 app.use((req, res, next) => {
   const err = new Error("Page Not Found");
-  err.status=404;
+  err.status = 404;
   next(err);
 });
 
