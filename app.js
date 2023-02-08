@@ -2,10 +2,16 @@ const express = require("express");
 const mongoose = require("mongoose");
 const ProductsRoute = require("./routes/products.route");
 const app = express();
+app.use(express.json());
+
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb+srv://admin:admin@demo.56us5gq.mongodb.net/?retryWrites=true&w=majority/demo").then(() => {
-  console.log("Mongodb Connected");
-});
+mongoose
+  .connect(
+    "mongodb+srv://admin:admin@demo.56us5gq.mongodb.net/Restapi?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Mongodb Connected");
+  });
 mongoose.set("strictQuery", true);
 app.use("/Products", ProductsRoute);
 
