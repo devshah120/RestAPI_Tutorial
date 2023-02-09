@@ -1,19 +1,12 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const ProductsRoute = require("./routes/products.route");
 const createError = require("http-errors");
 const app = express();
 app.use(express.json());
 
-mongoose.set("strictQuery", false);
-mongoose
-  .connect(
-    "mongodb+srv://admin:admin@demo.56us5gq.mongodb.net/Restapi?retryWrites=true&w=majority"
-  )
-  .then(() => {
-    console.log("Mongodb Connected");
-  });
-  
+//Intilize Database
+require("./initDB")();
+
 app.use("/Products", ProductsRoute);
 
 app.use((req, res, next) => {
