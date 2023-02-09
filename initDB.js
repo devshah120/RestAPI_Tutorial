@@ -3,7 +3,7 @@ module.exports = ()=>{
     mongoose.set("strictQuery", false);
 mongoose
   .connect(
-    "mongodb+srv://admin:admin@demo.56us5gq.mongodb.net/Restapi?retryWrites=true&w=majority"
+    process.env.MONGODB_URI
   )
   .then(() => {
     console.log("Mongodb Connected");

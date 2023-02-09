@@ -1,6 +1,7 @@
 const express = require("express");
 const ProductsRoute = require("./routes/products.route");
 const createError = require("http-errors");
+const dotenv = require('dotenv').config();
 const app = express();
 app.use(express.json());
 
@@ -26,6 +27,7 @@ app.use((err, req, res, next) => {
     },
   });
 });
-app.listen(3000, () => {
-  console.log("This is runnig on port 3000");
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log("This is runnig on port "+PORT+"...");
 });
