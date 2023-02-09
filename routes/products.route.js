@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/products.model");
+const createError = require("http-errors");
+const mongoose = require("mongoose");
 
 //For Getting Products
 router.get("/", async (req, res, next) => {
   try {
-    const result = await Product.find({}, { __v: 0 });
+    const product = await Product.find({}, { __v: 0 });
     // const result = await Product.find({price:2999},{__v:0});
-    res.send(result);
+    res.send(product);
   } catch (error) {
     console.log(error.message);
   }
@@ -21,6 +23,10 @@ router.post("/", async (req, res, next) => {
     res.send(result);
   } catch (error) {
     console.log(error.message);
+    if (error.name === "ValidationError") {
+        return next(createError(424,error.message))
+    }
+    next(error)
   }
   // Save Product In MongoDB using JS Promises
   //   const product = new Product({
@@ -39,11 +45,18 @@ router.post("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
-    const result = await Product.findById(id, { __v: 0 });
+    const product = await Product.findById(id, { __v: 0 });
     // const result = await Product.findOne({_id:id}, { __v: 0 });
-    res.send(result);
+    if (!product) {
+      throw createError(404, "Product Not Found");
+    }
+    res.send(product);
   } catch (error) {
     console.log(error.message);
+    if (error instanceof mongoose.CastError) {
+      return next(createError(404, "Product ID not Valid"));
+    }
+    next(error);
   }
 });
 
@@ -51,12 +64,19 @@ router.get("/:id", async (req, res, next) => {
 router.patch("/:id", async (req, res, next) => {
   const id = req.params.id;
   const update = req.body;
-  const option = {new:true}
+  const option = { new: true };
   try {
-    const result = await Product.findOneAndUpdate({ _id: id },update,option);
-    res.send(result);
+    const product = await Product.findOneAndUpdate({ _id: id }, update, option);
+    if (!product) {
+        throw createError(404, "Product Not Found");
+      }
+    res.send(product);
   } catch (error) {
     console.log(error.message);
+    if (error instanceof mongoose.CastError) {
+      return next(createError(404, "Product ID not Valid"));
+    }
+    next(error);
   }
 });
 
@@ -64,11 +84,17 @@ router.patch("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
-    const result = await Product.findOneAndDelete({ _id: id }, { __v: 0 });
-
-    res.send(result);
+    const product = await Product.findOneAndDelete({ _id: id }, { __v: 0 });
+    if (!product) {
+      throw createError(404, "Product Not Found");
+    }
+    res.send(product);
   } catch (error) {
     console.log(error.message);
+    if (error instanceof mongoose.CastError) {
+      return next(createError(404, "Product ID not Valid"));
+    }
+    next(error);
   }
 });
 

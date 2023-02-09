@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const ProductsRoute = require("./routes/products.route");
+const createError = require("http-errors");
 const app = express();
 app.use(express.json());
 
@@ -12,13 +13,14 @@ mongoose
   .then(() => {
     console.log("Mongodb Connected");
   });
-mongoose.set("strictQuery", true);
+
 app.use("/Products", ProductsRoute);
 
 app.use((req, res, next) => {
-  const err = new Error("Page Not Found");
-  err.status = 404;
-  next(err);
+  //   const err = new Error("Page Not Found");
+  //   err.status = 404;
+  //   next(err);
+  next(createError(404, "Page Not Found"));
 });
 
 //Error Handler
